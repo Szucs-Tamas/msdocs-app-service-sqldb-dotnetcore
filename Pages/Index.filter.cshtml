@@ -1,0 +1,90 @@
+﻿@model MovieCatalog.Web.Pages.IndexModel
+@using Azure.Core
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using MovieCatalog.Web.Utils
+@using MovieCatalogApi.Entities
+
+<form method="get" class="row mt-3">
+    <div class="col-12 mb-3 pb-3 border-bottom text-center">
+        <label asp-for="Filter.Genres" class="fw-bold">Genres</label>
+        <div>
+            @foreach (var genre in Model.GenresWithCounts.OrderBy(g => g.Key.Name))
+            {
+                <div class="form-check form-check-inline">
+                    <input @(Model.Filter.Genres?.Contains(genre.Key.Name) ?? false ? "checked" : string.Empty)
+                           id="Filter.Genres[@genre.Key.Name]" type="checkbox" name="Filter.Genres" value="@genre.Key.Name"
+                           class="form-check-input" />
+                    <label class="form-check-label" for="Filter.Genres[@genre.Key.Name]">
+                        @genre.Key.Name (<small class="text-muted">@genre.Value</small>)
+                    </label>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-12 mb-3 pb-3 border-bottom text-center">
+        <label asp-for="Filter.TitleContains" class="fw-bold">Title</label>
+        <div class="row justify-content-center">
+            <div class="col-8">
+                <input asp-for="Filter.TitleContains" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="col-12 mb-3 pb-3 border-bottom text-center">
+        <label asp-for="Filter.TitleTypes" class="fw-bold">Type</label>
+        <div>
+            @foreach (var tn in Enum.GetValues(typeof(MovieCatalogApi.Entities.TitleType)).Cast<TitleType>())
+            {
+                <div class="form-check form-check-inline">
+                    <input @(Model.Filter.TitleTypes?.Any(t => t == tn) ?? false ? "checked" : string.Empty)
+                    id="Filter.TitleTypes[@tn]" type="checkbox" name="Filter.TitleTypes" value="@tn"
+                    class="form-check-input" />
+                    <label class="form-check-label" for="Filter.TitleTypes[@tn]">@tn</label>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="col-12 mb-3 pb-3 border-bottom">
+        <label asp-for="Filter.StartYearMin" class="fw-bold">Year of release</label>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <input asp-for="Filter.StartYearMin" class="form-control" min="1900" max="2100" />
+            </div>
+            <div class="col-auto text-center">-</div>
+            <div class="col-auto">
+                <input asp-for="Filter.StartYearMax" class="form-control" min="1900" max="2100" />
+            </div>
+        </div>
+    </div>
+    <div class="col-12 mb-3 pb-3 border-bottom">
+        <label asp-for="Filter.EndYearMin" class="fw-bold">Year of finale (serials only)</label>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <input asp-for="Filter.EndYearMin" class="form-control" min="1900" max="2100" />
+            </div>
+            <div class="col-auto text-center">-</div>
+            <div class="col-auto">
+                <input asp-for="Filter.EndYearMax" class="form-control" min="1900" max="2100" />
+            </div>
+        </div>
+    </div>
+    <div class="col-12 mb-3 pb-3 border-bottom">
+        <label asp-for="Filter.EndYearMin" class="fw-bold">Runtime (minutes)</label>
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <input asp-for="Filter.RuntimeMinutesMin" class="form-control" min="1" max="9999" />
+            </div>
+            <div class="col-auto text-center">-</div>
+            <div class="col-auto">
+                <input asp-for="Filter.RuntimeMinutesMax" class="form-control" min="1" max="999" />
+            </div>
+        </div>
+    </div>
+    @foreach (var (key, value) in ViewContext.HttpContext.Request.Query
+        .Where(q => q.Key != nameof(Model.PageSize) && q.Key != nameof(Model.PageNumber)))
+    {
+        <input type="hidden" name="@key" value="@value" />
+    }
+    <div class=" row">
+        <button type="submit" class="btn btn-primary fw-bold">Filter titles</button>
+    </div>
+</form>

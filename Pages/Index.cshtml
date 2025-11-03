@@ -1,0 +1,65 @@
+﻿@page
+@model MovieCatalog.Web.Pages.IndexModel
+@using MovieCatalogApi.Entities
+@using MovieCatalog.Web.Utils
+@{
+    ViewData["Title"] = "Movie Catalog";
+}
+
+<h2 class="mb-4">Movie Catalog</h2>
+<partial name="Index.filter" />
+
+<div class="row">
+    @if (Model.Titles.Results.Any())
+    {
+        @foreach (var title in Model.Titles.Results)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <a asp-page="Title" asp-route-id="@title.Id" class="text-decoration-none">
+                                @title.PrimaryTitle
+                            </a>
+                            @if (title.StartYear != null)
+                            {
+                                <span class="text-muted">(@title.StartYear)</span>
+                            }
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            @title.OriginalTitle
+                        </h6>
+
+                        <p class="card-text">
+                            <strong>Type:</strong> @title.TitleType
+                            <br />
+                            <strong>Runtime:</strong> @(title.RuntimeMinutes != null ? $"{title.RuntimeMinutes} min" : "-")
+                        </p>
+
+                        @if (title.TitleGenres.Any())
+                        {
+                            <div class="mt-2">
+                                @foreach (var g in title.TitleGenres)
+                                {
+                                    <span class="badge bg-secondary">@g.Genre.Name</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No titles found.</p>
+    }
+</div>
+
+<partial name="Index.paging" />
+
+<div class="mt-4">
+    <a asp-page="Title">
+         Add new title
+    </a>
+</div>

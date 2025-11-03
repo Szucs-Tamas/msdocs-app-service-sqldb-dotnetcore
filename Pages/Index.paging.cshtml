@@ -1,0 +1,79 @@
+@model MovieCatalog.Web.Pages.IndexModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using MovieCatalog.Web.Utils
+
+<nav class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <strong>@Model.TotalResults</strong> results found
+    </div>
+
+    <form method="get" class="d-flex align-items-center">
+        <label class="me-2">Sort by:</label>
+        <select asp-for="TitleSort" class="form-select w-auto me-3" onchange="this.form.submit()">
+            <option value="PrimaryTitle" selected="@(Model.TitleSort == TitleSort.PrimaryTitle)">Title</option>
+            <option value="ReleaseYear" selected="@(Model.TitleSort == TitleSort.ReleaseYear)">Release Year</option>
+            <option value="Runtime" selected="@(Model.TitleSort == TitleSort.Runtime)">Runtime</option>
+        </select>
+
+        <select asp-for="SortDescending" class="form-select w-auto me-3" onchange="this.form.submit()">
+            <option value="false" selected="@(!Model.SortDescending)">Ascending</option>
+            <option value="true" selected="@(Model.SortDescending)">Descending</option>
+        </select>
+
+        <label class="me-2">Page size:</label>
+        <select asp-for="PageSize" class="form-select w-auto" onchange="this.form.submit()">
+            @foreach (var size in new[] { 10, 20, 30, 60, 120 })
+            {
+                <option value="@size" selected="@(Model.PageSize == size)">@size</option>
+            }
+        </select>
+
+        @foreach (var (key, value) in ViewContext.HttpContext.Request.Query
+            .Where(q => q.Key != nameof(Model.PageSize) && q.Key != nameof(Model.PageNumber)))
+        {
+            <input type="hidden" name="@key" value="@value" />
+        }
+        <input type="hidden" asp-for="PageNumber" value="1" />
+    </form>
+</nav>
+
+@if (Model.LastPageNumber > 1)
+{
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(Model.CurrentPageNumber == 1 ? "disabled" : "")">
+                <a class="page-link"
+                   asp-all-route-data="ViewContext.HttpContext.Request.Query.ToDictionary(v => v.Key, v => v.Value.ToString())"
+                   asp-route-PageNumber="@(Model.CurrentPageNumber - 1)">
+                    Previous
+                </a>
+            </li>
+
+            @foreach (var i in Model.PageNumberOptions)
+            {
+                if (i == Model.CurrentPageNumber)
+                {
+                    <li class="page-item active"><span class="page-link">@i</span></li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a class="page-link"
+                           asp-all-route-data="ViewContext.HttpContext.Request.Query.ToDictionary(v => v.Key, v => v.Value.ToString())"
+                           asp-route-PageNumber="@i">
+                            @i
+                        </a>
+                    </li>
+                }
+            }
+
+            <li class="page-item @(Model.CurrentPageNumber >= Model.LastPageNumber ? "disabled" : "")">
+                <a class="page-link"
+                   asp-all-route-data="ViewContext.HttpContext.Request.Query.ToDictionary(v => v.Key, v => v.Value.ToString())"
+                   asp-route-PageNumber="@(Model.CurrentPageNumber + 1)">
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+}

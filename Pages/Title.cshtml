@@ -1,0 +1,79 @@
+﻿@page "{id?}"
+@using MovieCatalogApi.Entities
+@model MovieCatalog.Web.Pages.TitleModel
+@{
+    ViewData["Title"] = "Title Editor";
+}
+
+<h2>@(Model.Id == null ? "Add new title" : "Edit title")</h2>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success">@Model.SuccessMessage</div>
+}
+
+<form method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="form-group mb-2">
+                <label asp-for="PrimaryTitle"></label>
+                <input asp-for="PrimaryTitle" class="form-control" />
+                <span asp-validation-for="PrimaryTitle" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="OriginalTitle"></label>
+                <input asp-for="OriginalTitle" class="form-control" />
+                <span asp-validation-for="OriginalTitle" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="TitleType"></label>
+                <div>
+                    @foreach (var type in Enum.GetValues(typeof(MovieCatalogApi.Entities.TitleType)).Cast<TitleType>())
+                    {
+                        <label class="me-2">
+                            <input type="radio" asp-for="TitleType" value="@type" /> @type
+                        </label>
+                    }
+                </div>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="StartYear"></label>
+                <input asp-for="StartYear" class="form-control" />
+                <span asp-validation-for="StartYear" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="EndYear"></label>
+                <input asp-for="EndYear" class="form-control" />
+                <span asp-validation-for="EndYear" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-2">
+                <label asp-for="RuntimeMinutes"></label>
+                <input asp-for="RuntimeMinutes" class="form-control" />
+                <span asp-validation-for="RuntimeMinutes" class="text-danger"></span>
+            </div>
+
+        </div>
+
+        <div class="col-md-6">
+            <label asp-for="SelectedGenres"></label>
+            <select asp-for="SelectedGenres" asp-items="Model.AllGenres" class="form-select" multiple size="15"></select>
+            <span asp-validation-for="SelectedGenres" class="text-danger"></span>
+        </div>
+    </div>
+
+    <hr />
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

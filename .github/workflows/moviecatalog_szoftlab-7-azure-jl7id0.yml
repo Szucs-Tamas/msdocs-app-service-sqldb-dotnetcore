@@ -30,7 +30,9 @@ jobs:
         run: dotnet publish MovieCatalog.Web.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Install dotnet ef
-        run: dotnet tool install -g dotnet-ef --version 8.*
+        run: |
+          dotnet tool install -g dotnet-ef --version 8.*
+          echo "$HOME/.dotnet/tools" >> $GITHUB_PATH
 
       - name: Copy dacpac
         run: cp imdbtitles_sample_azure.dacpac ${{env.  DOTNET_ROOT}}/myapp

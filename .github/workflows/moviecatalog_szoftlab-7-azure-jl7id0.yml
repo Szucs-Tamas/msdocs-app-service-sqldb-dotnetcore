@@ -27,7 +27,7 @@ jobs:
         run: dotnet build MovieCatalog.Web.sln --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish MovieCatalog.Web.sln -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: Install dotnet ef
         run: dotnet tool install -g dotnet-ef --version 8.*

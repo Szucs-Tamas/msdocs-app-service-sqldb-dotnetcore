@@ -13,7 +13,7 @@ namespace MovieCatalog.Web
             // Add services to the container.
             builder.Services.AddRazorPages();
             builder.Services.AddDbContext<MovieCatalogDbContext>(
-                options => options.UseSqlServer(builder.Configuration.GetConnectionString("JL7ID0")));
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING")));
             builder.Services.AddScoped(typeof(IMovieCatalogDataService), typeof(MovieCatalogDataService));
 
             var app = builder.Build();
